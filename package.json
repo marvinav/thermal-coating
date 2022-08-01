@@ -1,0 +1,27 @@
+{
+  "name": "heat-transport",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "jest"
+  },
+  "repository": {
+    "type": "git",
+    "url": "\\"
+  },
+  "author": "marvinav",
+  "license": "MIT",
+  "dependencies": {
+    "piscina": "^3.2.0",
+    "prompt": "^1.3.0",
+    "typescript": "^4.7.4"
+  },
+  "devDependencies": {
+    "@types/jest": "^28.1.6",
+    "@types/node": "^18.6.1",
+    "@types/prompt": "^1.1.2",
+    "jest": "^28.1.3",
+    "ts-jest": "^28.0.7"
+  }
+}
