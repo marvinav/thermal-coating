@@ -3,6 +3,7 @@ import { addLayer } from "./add-layer";
 import { calculateMesh } from "./calculate-mesh";
 import { createMesh } from "./create-mesh";
 import { saveMesh } from "../interfaces/save-mesh";
+import { enviroment } from "../enviroment";
 
 function contactHeatConductivity(
   firstHeatConductivity: number,
@@ -16,28 +17,16 @@ function contactHeatConductivity(
 }
 
 export async function main() {
-  const coatingStartTemperature = 1e4 * 100;
+  const { config, commands } = enviroment;
+  if (!config) {
+    throw new Error('Config is not undefined');
+  }
 
-  const time = 0.001;
-  const totalTime = 5400;
-  const depositTime = 10;
-  const step = 1;
-  const stepInZ = 1e6;
+  const { coatingStartTemperature, time, totalTime, depositTime, step, stepInZ, substrateMaterial, coatingMaterial } = config;
 
-  const substrateMaterial = {
-    radiance: 5.67e-24 * 0.4,
-    heatConductivity: 4.54e-6,
-    mass: step * step * stepInZ * 10 * 7850 * 1e-24 * 1000,
-    heatCapacity: 468,
-  };
+  substrateMaterial.mass = step * step * stepInZ * 10 * 7850 * 1e-24 * 1000;
+  coatingMaterial.mass = step * stepInZ * step * 5210 * 1e-24 * 1000;
 
-  // For titanium nitride
-  const coatingMaterial = {
-    radiance: 0.15 * 5.67e-24,
-    heatConductivity: 29e-6,
-    mass: step * stepInZ * step * 5210 * 1e-24 * 1000,
-    heatCapacity: 601,
-  };
   const substractFaces = [
     { area: step * stepInZ, step: step },
     { area: step * stepInZ, step: step },
@@ -56,7 +45,6 @@ export async function main() {
   //   substrateMaterial.heatConductivity,
   //   coatingMaterial.heatConductivity
   // );
-  const logs: Promise<unknown>[] = [];
 
   let coatingMesh = createMesh(
     { x: step, y: step * 1 },
@@ -69,12 +57,13 @@ export async function main() {
     { x: step, y: step },
     293
   );
-  console.log(path.join(__dirname, "../result"));
+
   console.log("Substrate mesh created");
   let i = 0;
   let logIterate = 0;
   const contactHeatTransfer = 8e-5;
   let elapsed = 0;
+
 
   for (i; i < totalTime / time; i++) {
     elapsed = elapsed + time;
@@ -107,15 +96,15 @@ export async function main() {
       await saveMesh({
         mesh: coatingMesh,
         path: path.join(
-          __dirname,
-          `../result/coating.${Math.round(i / time)}.csv`
+          commands.saveDir,
+          `/coating.${Math.round(i / time)}.csv`
         ),
       });
       await saveMesh({
         mesh: substrateMesh,
         path: path.join(
-          __dirname,
-          `../result/substrate.${Math.round(i / time)}.csv`
+          commands.saveDir,
+          `/substrate.${Math.round(i / time)}.csv`
         ),
       });
     }
@@ -129,18 +118,16 @@ export async function main() {
       );
 
       console.log("deposit");
-      console.timeLog("calc");
       console.log(`Elapsed ${1 - i / (totalTime / time)}`);
     }
   }
   await saveMesh({
     mesh: coatingMesh,
-    path: path.join(__dirname, `../result/coating.end.${i}.csv`),
+    path: path.join(commands.saveDir, `/coating.end.${i}.csv`),
   });
   await saveMesh({
     mesh: substrateMesh,
-    path: path.join(__dirname, `../result/substrate.end.${i}.csv`),
+    path: path.join(commands.saveDir, `/substrate.end.${i}.csv`),
   });
   console.log({ coatingStartTemperature, contactHeatTransfer });
-  console.timeEnd("calc");
 }

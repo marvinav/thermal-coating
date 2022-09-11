@@ -1,0 +1,22 @@
+{
+    "coatingStartTemperature": 1e6,
+    "time": 0.001,
+    "totalTime": 5400,
+    "depositTime": 10,
+    "step": 1,
+    "stepInZ": 1e6,
+    "substrateMaterial": {
+        "name": "Steel",
+        "radiance": 1.37e-24,
+        "heatConductivity": 4.54e-6,
+        "density": 7850e-24,
+        "heatCapacity": 468
+    },
+    "coatingMaterial": {
+        "name": "TiN",
+        "radiance": 0.85e-24,
+        "heatConductivity": 29e-6,
+        "density": 5210,
+        "heatCapacity": 601
+    }
+}

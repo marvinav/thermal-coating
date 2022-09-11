@@ -1,0 +1,17 @@
+#Specify a base image
+FROM node:16
+
+#Setup working directory
+WORKDIR '/thermal-coating'
+
+#Copy the dependencies file
+COPY package.json .
+#Install dependencies
+RUN npm config set unsafe-perm true
+RUN mkdir /thermal-coating/node_modules -p
+RUN chown -R node:node /thermal-coating/node_modules
+RUN npm install
+#Copy remaining files
+USER node
+#Start the application
+# CMD ["npm", "run", "dev:start"]
