@@ -1,6 +1,7 @@
 export const enviroment: {
     config?: {
         coatingStartTemperature: number,
+        minimalTemperature: number,
         time: number,
         totalTime: number,
         depositTime: number,
